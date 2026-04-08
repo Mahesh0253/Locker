@@ -20,6 +20,8 @@ services:
       context: .
       dockerfile: apps/web/Dockerfile
       target: builder
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/locker
     working_dir: /app/packages/database
