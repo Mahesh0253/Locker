@@ -22,6 +22,9 @@ COPY packages/database/package.json packages/database/package.json
 COPY packages/email/package.json packages/email/package.json
 COPY packages/storage/package.json packages/storage/package.json
 
+# Create public dir so the postinstall script (cp pdfjs worker) doesn't fail
+RUN mkdir -p apps/web/public
+
 RUN pnpm install --frozen-lockfile
 
 # ── Build ─────────────────────────────────────────────────────────────────────
