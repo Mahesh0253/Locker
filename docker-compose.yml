@@ -15,5 +15,52 @@ services:
       timeout: 5s
       retries: 5
 
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: builder
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/locker
+    working_dir: /app/packages/database
+    command: pnpm drizzle-kit migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/locker
+      NODE_ENV: production
+    volumes:
+      - blob_data:/app/local-blobs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - default
+      - reverse_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=reverse_proxy"
+      - "traefik.http.routers.locker-web.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.locker-web.entrypoints=websecure"
+      - "traefik.http.services.locker-web.loadbalancer.server.port=3000"
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  blob_data:
+
+networks:
+  reverse_proxy:
+    external: true

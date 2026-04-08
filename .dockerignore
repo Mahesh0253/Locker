@@ -1,0 +1,39 @@
+# Dependencies (installed fresh inside container)
+node_modules
+.pnpm-store
+
+# Build outputs (rebuilt inside container)
+.next
+dist
+.turbo
+out
+
+# Environment files (passed via env_file / docker-compose)
+.env
+.env.local
+.env.*.local
+
+# Version control
+.git
+
+# IDE and OS
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
+
+# Testing artifacts
+coverage
+test-results
+e2e
+playwright.config.ts
+
+# Local blob storage
+local-blobs
+
+# Claude Code
+.claude
+
+# Standalone services (separate build context)
+services
