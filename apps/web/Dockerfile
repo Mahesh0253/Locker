@@ -37,6 +37,10 @@ COPY apps/web/ apps/web/
 # Re-run postinstall to copy pdfjs worker into public/
 RUN pnpm --filter @locker/web run postinstall
 
+# NEXT_PUBLIC_* vars are inlined at build time — must be available here
+ARG NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+
 # Build with Turborepo (builds dependent packages first, then next build)
 RUN pnpm turbo build --filter=@locker/web
 
